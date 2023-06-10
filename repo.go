@@ -90,14 +90,11 @@ func (repo *repo) GetDB(q _query.Query) any {
 			}
 		}
 	}
-	db := repo.DB
+	var model any
 	if q != nil {
-		model, _ := query.FindModel(q)
-		if model != nil {
-			db = db.Model(model)
-		}
+		model, _ = query.FindModel(q)
 	}
-	return db
+	return repo.DB.Model(model)
 }
 
 func (repo *repo) getDB(query _query.Query) *gorm.DB {
