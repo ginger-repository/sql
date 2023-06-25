@@ -26,17 +26,6 @@ func (repo *repo) getModels(q query.Query) any {
 
 func (repo *repo) newDB(q query.Query, model any) (*gorm.DB, errors.Error) {
 	db := repo.getDB(q)
-
-	if model == nil {
-		if db != nil {
-			return db, nil
-		}
-		return repo.DB, nil
-	}
-
-	if db == nil {
-		db = repo.Model(model)
-	}
 	if db.Error != nil {
 		return nil, errors.Internal(db.Error)
 	}
@@ -45,5 +34,5 @@ func (repo *repo) newDB(q query.Query, model any) (*gorm.DB, errors.Error) {
 		db = db.WithContext(q.GetContext())
 	}
 
-	return db, nil
+	return db.Model(model), nil
 }

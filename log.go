@@ -93,6 +93,7 @@ func (l *_logger) Error(ctx context.Context, s string, i ...interface{}) {
 	panic("implement me")
 }
 
-func (l *_logger) Trace(ctx context.Context, begin time.Time, fc func() (sql string, rowsAffected int64), err error) {
+func (l *_logger) Trace(ctx context.Context,
+	begin time.Time, fc func() (sql string, rowsAffected int64), err error) {
 	panic("implement me")
 }
