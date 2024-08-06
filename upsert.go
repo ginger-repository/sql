@@ -14,13 +14,33 @@ func (repo *repo) Upsert(q query.Query, entity any) errors.Error {
 
 	db, err := repo.newDB(q, model)
 	if err != nil {
-		return err
+		return err.WithTrace("newDB")
 	}
 
-	db = db.
-		Clauses(clause.OnConflict{
-			UpdateAll: true,
-		}).Create(entity)
+	update := q.GetUpdate()
+	if update != nil {
+		sets := update.GetSets()
+		du := make(clause.Set, len(sets))
+		for i, s := range sets {
+			du[i] = clause.Assignment{
+				Column: clause.Column{
+					Name: s.Key,
+				},
+				Value: s.Value,
+			}
+		}
+		db = db.
+			Clauses(clause.OnConflict{
+				DoUpdates: du,
+			})
+	} else {
+		db = db.
+			Clauses(clause.OnConflict{
+				UpdateAll: true,
+			})
+	}
+
+	db = db.Create(entity)
 	if db.Error != nil {
 		return errors.Internal(db.Error)
 	}

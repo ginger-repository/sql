@@ -84,14 +84,15 @@ func (repo *repo) Update(q _query.Query, update any) errors.Error {
 
 	db, err := repo.newDB(q, model)
 	if err != nil {
-		return err
+		return err.WithTrace("newDB")
 	}
 
 	qry := query.New(q, db)
 
 	err = qry.Filter()
 	if err != nil {
-		return err
+		return err.
+			WithTrace("qry.Filter")
 	}
 
 	if update != nil {
@@ -99,13 +100,14 @@ func (repo *repo) Update(q _query.Query, update any) errors.Error {
 	}
 	if update := q.GetUpdate(); update != nil {
 		if err := repo.update(db, update); err != nil {
-			return err
+			return err.WithTrace("update")
 		}
 	}
 
 	db = db.Callback().Update().Execute(db)
 	if db.Error != nil {
-		return errors.Internal(db.Error)
+		return errors.Internal(db.Error).
+			WithTrace("Update().Execute")
 	}
 
 	if db.RowsAffected == 0 {
