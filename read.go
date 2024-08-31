@@ -92,7 +92,7 @@ func (repo *repo) Get(q _query.Query) (any, errors.Error) {
 	}
 
 	if db.RowsAffected == 0 {
-		return nil, errors.DefaultNotFoundError
+		return nil, errors.NotFound(errors.DefaultNotFoundError)
 	}
 
 	return model, nil
